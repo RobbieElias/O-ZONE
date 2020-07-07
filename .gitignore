@@ -1,0 +1,7 @@
+.CoronaLiveBuild
+.idea/
+
+passwords.txt
+
+google-services.json
+GoogleService-Info.plist

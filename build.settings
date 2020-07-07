@@ -1,0 +1,131 @@
+--
+-- For more information on build.settings, see the Project Build Settings guide at:
+-- https://docs.coronalabs.com/guide/distribution/buildSettings
+--
+
+settings =
+{
+	splashScreen = 
+    {
+        enable = false
+    },
+	orientation =
+	{
+		-- Supported values for orientation:
+		-- portrait, portraitUpsideDown, landscapeLeft, landscapeRight
+		default = "portrait",
+		supported = { "portrait", },
+	},
+
+	--
+	-- Android section
+	--
+	android =
+	{
+		usesPermissions =
+		{
+			"android.permission.INTERNET",
+			"android.permission.ACCESS_NETWORK_STATE",
+			"android.permission.WRITE_EXTERNAL_STORAGE",
+			"com.android.vending.BILLING",
+		},
+		applicationChildElements =
+        {
+            [[
+                <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID"
+                    android:value="***REMOVED***"/>  -- replace with your app id. See: https://goo.gl/fQ2neu
+            ]],
+            [[
+            	<meta-data android:name="android.max_aspect" android:value="2.1"/>
+            ]],
+        },
+        strings =
+		{
+
+		    ["google_app_id"]= "***REMOVED***"
+		},
+    	useGoogleServicesJson = true,
+        googlePlayGamesAppId = "***REMOVED***",
+	},
+
+	--
+	-- iOS section
+	--
+	iphone =
+	{
+		xcassets = "Images.xcassets",
+		plist =
+		{
+			UIStatusBarHidden = false,
+			UILaunchStoryboardName = "LaunchScreen",
+			GADApplicationIdentifier = "***REMOVED***",
+			NSAppTransportSecurity = { NSAllowsArbitraryLoads=true },
+			NSLocationAlwaysUsageDescription = "This permission stems from a library we use, but it should never be called. If you see this, deny access.",
+            NSLocationWhenInUseUsageDescription = "This permission stems from a library we use, but it should never be called. If you see this, deny access.",
+            NSLocationAlwaysAndWhenInUseUsageDescription = "This permission stems from a library we use, but it should never be called. If you see this, deny access.",
+            NSBluetoothAlwaysUsageDescription = "This permission stems from a library we use, but it should never be called. If you see this, deny access.",
+		},
+	},
+
+	--
+	-- Plugins section
+	--
+	plugins =
+	{
+		["plugin.google.iap.v3"] =
+        {
+            -- required
+            publisherId = "com.coronalabs",
+            supportedPlatforms = { android = true },
+        },
+		["plugin.iap_badger"] =
+        {
+            -- required
+            publisherId = "uk.co.happymongoose",
+        },
+		["plugin.gpgs.v2"] = 
+		{
+            publisherId = "com.coronalabs",
+            supportedPlatforms = { android=true },
+        },
+        ["CoronaProvider.gameNetwork.apple"] =
+        {
+            publisherId = "com.coronalabs",
+            supportedPlatforms = { iphone=true, ["iphone-sim"]=true },
+        },
+		["plugin.firebaseAnalytics"] = 
+		{
+    		publisherId = "tech.scotth",
+    	},
+		['plugin.appodeal.beta.base'] = { publisherId = 'com.coronalabs' },
+		['plugin.appodeal.beta.AdColony'] = { publisherId = 'com.coronalabs' },
+		['plugin.appodeal.beta.AmazonAds'] = { publisherId = 'com.coronalabs' },
+		['plugin.appodeal.beta.AppLovin'] = { publisherId = 'com.coronalabs' },
+		-- -- ['plugin.appodeal.beta.Appnext'] = { publisherId = 'com.coronalabs' },
+		['plugin.appodeal.beta.Chartboost'] = { publisherId = 'com.coronalabs' },
+		-- -- ['plugin.appodeal.beta.FacebookAudience'] = { publisherId = 'com.coronalabs' },
+		-- -- ['plugin.appodeal.beta.Flurry'] = { publisherId = 'com.coronalabs' },
+		['plugin.appodeal.beta.GoogleAdMob'] = { publisherId = 'com.coronalabs' },
+		['plugin.appodeal.beta.InMobi'] = { publisherId = 'com.coronalabs' },
+		['plugin.appodeal.beta.IronSource'] = { publisherId = 'com.coronalabs' },
+		['plugin.appodeal.beta.Mobvista'] = { publisherId = 'com.coronalabs' },
+		['plugin.appodeal.beta.MyTarget'] = { publisherId = 'com.coronalabs' },
+		['plugin.appodeal.beta.Ogury'] = { publisherId = 'com.coronalabs' },
+		['plugin.appodeal.beta.StartApp'] = { publisherId = 'com.coronalabs' },
+		['plugin.appodeal.beta.Tapjoy'] = { publisherId = 'com.coronalabs' },
+		['plugin.appodeal.beta.TwitterMoPub'] = { publisherId = 'com.coronalabs' },
+		['plugin.appodeal.beta.Unity'] = { publisherId = 'com.coronalabs' },
+		-- -- ['plugin.appodeal.beta.Vungle'] = { publisherId = 'com.coronalabs' },
+		['plugin.appodeal.beta.Yandex'] = { publisherId = 'com.coronalabs' },
+	},
+
+	--
+	-- Project section
+	--
+	excludeFiles =
+	{
+		-- Exclude unnecessary files for each platform
+		all = { "Icon.png", "Icon-*dpi.png", "Images.xcassets", "*.tps", "*.pes", ".git/*"},
+		android = { "LaunchScreen.storyboardc", },
+	},
+}
