@@ -22,6 +22,7 @@ settings =
 	--
 	android =
 	{
+		minSdkVersion = "16",
 		usesPermissions =
 		{
 			"android.permission.INTERNET",
