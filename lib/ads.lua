@@ -73,22 +73,46 @@ local function adListener(event)
 end
 
 --Check Test Mode before app submission
-function ads:init(hasUserConsent)
-	if hasUserConsent then
-		print("ADS INIT CALLED: TRUE")
-	else
-		print("ADS INIT CALLED: FALSE")
-	end
+-- Consent is handled by Appodeal's built-in consent manager (IAB TCF v2), which shows its form during init where required
+function ads:init()
+	print("ADS INIT CALLED")
 	if (isValidDevice == false) then return end
 
 	appodeal = require("plugin.appodeal")
 
-	appodeal.init(adListener, { 
-	    appKey=appKey, 
+	appodeal.init(adListener, {
+	    appKey=appKey,
 	    testMode=_g.debug,
 	    supportedAdTypes = {"interstitial", "rewardedVideo"},
-	    hasUserConsent = hasUserConsent
+	    disableWriteExternalPermissionCheck = true,
 	})
+end
+
+-- Privacy options (GDPR/CCPA consent settings), Android only via plugin.appodealConsent
+local function getConsentPlugin()
+	if (isValidDevice == false or platform ~= "android") then return nil end
+	local ok, consent = pcall(require, "plugin.appodealConsent")
+	if ok then return consent end
+	return nil
+end
+
+function ads:isPrivacyOptionsRequired()
+	local consent = getConsentPlugin()
+	if consent == nil then return false end
+	return _g.testPrivacyOptions or consent.getPrivacyOptionsStatus() == "Required"
+end
+
+function ads:showPrivacyOptions(callback)
+	local consent = getConsentPlugin()
+	if consent == nil then return false end
+	local show = _g.testPrivacyOptions and consent.showTestPrivacyOptionsForm or consent.showPrivacyOptionsForm
+	show(function(event)
+		if event.isError then
+			print("Appodeal privacy options error: " .. tostring(event.errorMessage))
+		end
+		if callback then callback(event) end
+	end)
+	return true
 end
 
 function ads:setRewardsCallback(func)

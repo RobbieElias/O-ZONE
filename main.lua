@@ -19,8 +19,8 @@ local loadsave = require("lib.loadsave")
 local _ads = require("lib.ads")
 local _gs = require("lib.gameServices")
 local _g = require("lib.globalVariables")
-local _iap = require("plugin.iap_badger")
-local _fa = require("plugin.firebaseAnalytics")
+local _iap = require("lib.iap_badger2")
+-- local _fa = require("plugin.firebaseAnalytics")
 local _data = require("lib.data")
 
 
@@ -285,11 +285,8 @@ function checkMemory()
 end
 if (_g.debug) then timer.performWithDelay( 1000, checkMemory, 0 ) end
 
--- Init ads (check GDPR first)
-local _gdpr = require("lib.gdprutil")
-if _gdpr.hasResponded() then
-    _ads:init(_gdpr.hasUserConsent())
-end
+-- Init ads (Appodeal shows its own GDPR/CCPA consent form during init where required)
+_ads:init()
 
 -- IAP Stuff
 local catalogue = {
@@ -327,6 +324,8 @@ end
 local iapOptions = {
     --The catalogue generated above
     catalogue=catalogue,
+    --The app's package name (required by IAP Badger 2)
+    package="com.robbieelias.ozone",
     --The filename in which to save the inventory
     filename="inventory.txt",
     --Salt for the hashing algorithm
@@ -355,7 +354,7 @@ end
 _gs:login(false)
 
 -- Initialize Firebase Analytics
-_fa.init()
+-- _fa.init()
 
 -- Go to initial scene
 composer.gotoScene("scenes.menu")

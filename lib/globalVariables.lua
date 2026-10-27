@@ -25,6 +25,8 @@ function M:init()
 	M.bgScrollSpeed = 1.8
 	M.scrollSpeed = 1.4
 	M.debug = false
+	-- Forces the Privacy Settings button and an EEA consent form on any Android device (testing only, must be false for release)
+	M.testPrivacyOptions = false
 end
  
 return M

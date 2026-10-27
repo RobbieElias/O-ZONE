@@ -11,11 +11,10 @@ local scene = composer.newScene()
 local widget = require( "widget" )
 local confetti = require("lib.confetti")
 local _ads = require("lib.ads")
-local _gdpr = require("lib.gdprutil")
 local _gs = require("lib.gameServices")
 local _g = require("lib.globalVariables")
 local _data = require("lib.data")
-local _iap = require("plugin.iap_badger")
+local _iap = require("lib.iap_badger2")
 
 -- Display groups
 local confettiGroup
@@ -348,10 +347,6 @@ function scene:show( event )
             score = nil
             gameOverGroup.isVisible = false
             logoText.isVisible = true
-
-            if not _gdpr.hasResponded() then
-                composer.showOverlay( "scenes.gdpr", {isModal = true, effect = "fromLeft", time = 400})
-            end
         end
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen

@@ -8,11 +8,12 @@ local platform = system.getInfo( "platform" )
 local env = system.getInfo( "environment" )
 local userInitiated = false
 local callback = nil
+local gpgsInitialized = false
 
 local leaderboardId
  
 if ( platform == "android" and env ~= "simulator" ) then
-    gs.gpgs = require( "plugin.gpgs.v2" )
+    gs.gpgs = require( "plugin.gpgs.v3" )
     gs.gameCenter = nil
     leaderboardId = "CgkIntj3kaALEAIQAQ"
 elseif ( platform == "ios" and env ~= "simulator" ) then
@@ -96,11 +97,17 @@ function gs:login(byUser)
     userInitiated = byUser or false
 	-- Initialize game network based on platform
 	if ( gs.gpgs ) then
-        -- Initialize Google Play Games Services
-        if _g.debug then
-            gs.gpgs.enableDebug()
+        -- Initialize Google Play Games Services (v3 requires init, which also signs in automatically)
+        if not gpgsInitialized then
+            if _g.debug and gs.gpgs.enableDebug then
+                gs.gpgs.enableDebug()
+            end
+            gs.gpgs.init()
+            gpgsInitialized = true
         end
-        gs.gpgs.login( { userInitiated=userInitiated, listener=gpgsInitListener } )
+        if userInitiated then
+            gs.gpgs.login( { userInitiated=true, listener=gpgsInitListener } )
+        end
 	elseif ( gs.gameCenter ) then
         -- Initialize Apple Game Center
         gs.gameCenter.init( "gamecenter", gcInitListener )
@@ -131,7 +138,7 @@ end
 
 function gs:showLeaderboard()
     if ( gs.gpgs ) then
-        gs.gpgs.leaderboards.show(leaderboardId)
+        gs.gpgs.leaderboards.show( { leaderboardId=leaderboardId } )
     elseif ( gs.gameCenter ) then
         gs.gameCenter.show( "leaderboards",
         {

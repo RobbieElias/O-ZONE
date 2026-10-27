@@ -15,7 +15,7 @@ local _gs = require("lib.gameServices")
 local _g = require("lib.globalVariables")
 local _data = require("lib.data")
 local _ads = require("lib.ads")
-local _fa = require("plugin.firebaseAnalytics")
+-- local _fa = require("plugin.firebaseAnalytics")
 local rand = math.random
 
 -- Variables
@@ -436,7 +436,7 @@ function scene:gameOver(fromOverlay)
     end
 
     -- Log event in firebase
-    _fa.logEvent("post_score", {level=level, score=score, character="normal"})
+    -- _fa.logEvent("post_score", {level=level, score=score, character="normal"})
     print("event logged")
 
     local params = { score=score, level=level, isHighScore=isHighScore }

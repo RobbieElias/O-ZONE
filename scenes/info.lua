@@ -11,7 +11,7 @@ local scene = composer.newScene()
 local widget = require( "widget" )
 local _g = require("lib.globalVariables")
 local _ads = require("lib.ads")
-local _iap = require("plugin.iap_badger")
+local _iap = require("lib.iap_badger2")
 
 function scene:onBackKey(event)
     composer.hideOverlay( "slideRight", 400 )
@@ -64,9 +64,14 @@ local function restorePurchaseButtonEvent( event )
     end
 end
 
-local function adSettingsButtonEvent( event )
+local function privacySettingsButtonEvent( event )
     if ( "ended" == event.phase ) then
-        composer.showOverlay( "scenes.gdpr", {isModal = true, effect = "fromLeft", time = 400})
+        _ads:showPrivacyOptions(function(event)
+            if event.isError then
+                showMessage("Privacy settings unavailable: " .. tostring(event.errorMessage))
+            end
+            setImmersive()
+        end)
     end
 end
 
@@ -128,6 +133,9 @@ function scene:create( event )
 
     local buttonsY = _g.screenBottom - (_g.screenBottom - (tutorial.y+tW*0.5))*0.5 - 20
 
+    -- Privacy settings are only offered where Appodeal's consent manager requires them (e.g. EEA/UK)
+    local showPrivacySettings = _ads:isPrivacyOptionsRequired()
+
     local restorePurchaseButton = widget.newButton(
         {
             label = "Restore Purchase",
@@ -135,7 +143,7 @@ function scene:create( event )
             fontSize = 14,
             onEvent = restorePurchaseButtonEvent,
             textOnly = true,
-            x = _g.centerX - 75,
+            x = showPrivacySettings and _g.centerX - 75 or _g.centerX,
             y = buttonsY - 20,
             cornerRadius = 10,
             labelColor = { default={204/255,204/255,204/255}, over={163/255,163/255,163/255} },
@@ -143,20 +151,22 @@ function scene:create( event )
     )
     sceneGroup:insert(restorePurchaseButton)
 
-    local adSettingsButton = widget.newButton(
-        {
-            label = "Ad Settings",
-            font = _g.fontRegular,
-            fontSize = 14,
-            onEvent = adSettingsButtonEvent,
-            textOnly = true,
-            x = _g.centerX + 75,
-            y = buttonsY - 20,
-            cornerRadius = 10,
-            labelColor = { default={204/255,204/255,204/255}, over={163/255,163/255,163/255} },
-        }
-    )
-    sceneGroup:insert(adSettingsButton)
+    if showPrivacySettings then
+        local privacySettingsButton = widget.newButton(
+            {
+                label = "Privacy Settings",
+                font = _g.fontRegular,
+                fontSize = 14,
+                onEvent = privacySettingsButtonEvent,
+                textOnly = true,
+                x = _g.centerX + 75,
+                y = buttonsY - 20,
+                cornerRadius = 10,
+                labelColor = { default={204/255,204/255,204/255}, over={163/255,163/255,163/255} },
+            }
+        )
+        sceneGroup:insert(privacySettingsButton)
+    end
 
     local privacyPolicyButton = widget.newButton(
         {
